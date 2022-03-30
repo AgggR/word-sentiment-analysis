@@ -1,0 +1,283 @@
+import re
+import matplotlib.pyplot as plt
+
+print (""" SENTIMENT ANALYSIS TOOL:
+ ***** MENU *****
+1. SENTIMENT ANALYSIS with stopwords
+2. SENTIMENT ANALYSIS without stopwords
+3. MOST FREQUENT positive/negative words
+4. PERCENTAGE of positive/negative/neutral words/stop words
+5. SENTIMENT ANALYSIS based on keywords""")
+
+neg_words = open('negative_words.txt', 'r')
+neg_words_contents = neg_words.read()
+neg_words.close()
+
+poz_words = open('positive_words.txt', 'r')
+poz_words_contents = poz_words.read()
+poz_words.close()
+
+stop_words = open('stopwords.txt', 'r')
+stop_words_contents = stop_words.read()
+stop_words.close()
+
+neg_words_list = neg_words_contents.splitlines()
+
+poz_words_list = poz_words_contents.splitlines()
+
+stop_words_list = stop_words_contents.splitlines()
+# DO tej pory wczytałyśmy listy pozytywnych, negatywnych i stop wyrazów.
+
+# Teraz wybieramy który tekst wczytujemy- test.
+tekst = int(input("Wybierz numer tekstu: "))
+if tekst == 1:
+    test_1 = open('text_1.txt','r')
+    test_1_cont = test_1.read()
+    test_1.close()
+    nazwa_tekstu = "The Death Penalty: An Opinion Essay"
+
+elif tekst == 2:
+    test_1 = open('ifl_sc.txt', 'r')
+    test_1_cont = test_1.read()
+    test_1.close()
+    nazwa_tekstu = "Oakland Becomes First US City To Decriminalize All Natural Psychedelics."
+
+test_1_cont = test_1_cont.replace('\n','')
+test_1_cont = test_1_cont.replace(',','')
+test_1_cont = test_1_cont.replace(';','')
+test_1_cont = test_1_cont.replace(':','')
+test_1_cont = test_1_cont.lower()
+#Teraz mamy wszytsko Lower Case, bez przecinków i nowych linii.
+
+test_1_list_sentences = re.split(r'\.|\!|\?',test_1_cont)
+print(test_1_list_sentences)
+
+test_1_cont = test_1_cont.replace('.','')
+test_1_cont = test_1_cont.replace('?','')
+test_1_cont = test_1_cont.replace('!','')
+test_1_cont = test_1_cont.lower()
+test_1_list_words = test_1_cont.split()
+print(test_1_list_words)
+# Lista słów z testu 1.
+#re — Regular expression operations
+
+
+decision = int(input("Select the option: "))
+if decision == 1:
+    def count_poz_words(test_1_list_words, poz_words_list):
+        count_poz = 0
+        for elem in test_1_list_words:
+            if elem in poz_words_list:
+                count_poz += 1
+        return count_poz
+
+
+    count_poz_words(test_1_list_words, poz_words_list)
+    print("Pozytywne słowa: ", count_poz_words(test_1_list_words, poz_words_list))
+
+
+    def count_neg_words(test_1_list_words, neg_words_list):
+        count_neg = 0
+        for elem in test_1_list_words:
+            if elem in neg_words_list:
+                count_neg += 1
+        return count_neg
+
+
+    count_neg_words(test_1_list_words, neg_words_list)
+    print("Negatywne słowa: ", count_neg_words(test_1_list_words, neg_words_list))
+
+    count_poz = count_poz_words(test_1_list_words, poz_words_list)
+    count_neg = count_neg_words(test_1_list_words, neg_words_list)
+
+    if count_poz == count_neg:
+        print("Tekst jest neutralny.")
+    elif count_poz > count_neg:
+        print("Tekst jest nacechowany pozytywnie.")
+    else:
+        print("Tekst jest nacechowany negatywnie.")
+
+    sizes = count_poz, count_neg
+    labels = 'positive', 'negative'
+    colours = 'mediumseagreen', 'crimson'
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes, labels=labels, colors=colours, autopct='%1.2f%%', shadow=True, startangle=140)
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    plt.title("Zestawienie procentowe sentymentu tekstu : " + nazwa_tekstu)
+    plt.show()
+
+
+# bez stop words:
+elif decision == 2:
+    for elf in test_1_list_words:
+        if elf in stop_words_list:
+            test_1_list_words.remove(elf)
+
+    def count_poz_words (test_1_list_words, poz_words_list):
+        count_poz = 0
+        for elem in test_1_list_words:
+            if elem in poz_words_list:
+                count_poz += 1
+        return count_poz
+
+    count_poz_words(test_1_list_words, poz_words_list)
+    print("Pozytywne słowa: ", count_poz_words(test_1_list_words, poz_words_list))
+
+    def count_neg_words (test_1_list_words, neg_words_list):
+        count_neg = 0
+        for elem in test_1_list_words:
+            if elem in neg_words_list:
+                count_neg += 1
+        return count_neg
+
+    count_neg_words(test_1_list_words, neg_words_list)
+    print("Negatywne słowa: ", count_neg_words(test_1_list_words, neg_words_list))
+
+    count_poz = count_poz_words(test_1_list_words, poz_words_list)
+    count_neg = count_neg_words(test_1_list_words, neg_words_list)
+
+    if count_poz == count_neg:
+        print("Tekst jest neutralny.")
+    elif count_poz > count_neg:
+        print("Tekst jest nacechowany pozytywnie.")
+    else:
+        print("Tekst jest nacechowany negatywnie.")
+
+    sizes = count_poz, count_neg
+    labels = 'positive', 'negative'
+    colours = 'mediumseagreen', 'crimson'
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes, labels=labels, colors=colours, autopct='%1.2f%%', shadow=True, startangle=140)
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    plt.title("Zestawienie procentowe sentymentu tekstu: " + nazwa_tekstu)
+    plt.show()
+
+# koniec przypadku - stop words
+
+
+elif decision == 3:
+    dct_poz = {}
+    dct_neg = {}
+    dct_neu = {}
+
+    for word in test_1_list_words:
+        if word in poz_words_list:
+            if word in dct_poz:
+                dct_poz[word] += 1
+            else:
+                dct_poz[word] = 1
+        elif word in neg_words_list:
+            if word in dct_neg:
+                dct_neg[word] += 1
+            else:
+                dct_neg[word] = 1
+        else:
+            if word in dct_neu:
+                dct_neu[word] += 1
+            else:
+                dct_neu[word] = 1
+
+    print(dct_poz)
+    print(sorted(dct_poz,key=dct_poz.items(), reverse=True))
+    print(sorted(dct_poz.values(), reverse=True))
+    plt.bar(sorted(dct_poz,key=dct_poz.items(), reverse=True), sorted(dct_poz.values(), reverse=True), color='g')
+    plt.show()
+
+
+
+
+elif decision == 4:
+    def count_poz_words(test_1_list_words, poz_words_list):
+        count_poz = 0
+        for elem in test_1_list_words:
+            if elem in poz_words_list:
+                count_poz += 1
+        return count_poz
+
+
+    count_poz_words(test_1_list_words, poz_words_list)
+    print("Pozytywne słowa: ", count_poz_words(test_1_list_words, poz_words_list))
+
+
+    def count_neg_words(test_1_list_words, neg_words_list):
+        count_neg = 0
+        for elem in test_1_list_words:
+            if elem in neg_words_list:
+                count_neg += 1
+        return count_neg
+
+
+    count_neg_words(test_1_list_words, neg_words_list)
+    print("Negatywne słowa: ", count_neg_words(test_1_list_words, neg_words_list))
+
+    count_poz = count_poz_words(test_1_list_words, poz_words_list)
+    count_neg = count_neg_words(test_1_list_words, neg_words_list)
+
+    count_all = len(test_1_list_words)
+    stopwordz = count_neg_words(test_1_list_words, stop_words_list)
+    count_neu = count_all - count_poz - count_neg
+    print("Słowa neutralne: ", count_neu)
+
+    print(count_all)
+
+    proc_poz = round(100 * float(count_poz / count_all), 2)
+    proc_neg = round(100 * float(count_neg / count_all), 2)
+    print(str(proc_poz) + '%')
+    print(str(proc_neg) + '%')
+
+    sizes = count_poz, count_neg, (count_neu - stopwordz), stopwordz
+    labels = 'positive', 'negative', 'neutral without stop words', 'stop words'
+    explode = (0, 0.1, 0, 0)  # only "explode" the 1st slice
+    colours = 'mediumseagreen', 'crimson', 'honeydew', 'yellow'
+    fig1, ax1 = plt.subplots()
+    ax1.pie(sizes, explode=explode, labels=labels, colors=colours, autopct='%1.2f%%', shadow=True, startangle=140)
+    ax1.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
+    plt.title("Zestawienie procentowe sentymentu tekstu: " + nazwa_tekstu)
+    plt.show()
+
+elif decision == 5:
+    keyword = input("Wprowadź słowo kluczowe: " )
+    keywords = []
+    for sentence in test_1_list_sentences:
+        if keyword in sentence:
+            keywords.append(sentence)
+    print(keywords)
+    print(len(keywords))
+
+    def count_poz_words(keywords, poz_words_list):
+        count_poz = 0
+        for elem in keywords:
+            if elem in poz_words_list:
+                count_poz += 1
+        return count_poz
+
+
+    count_poz_words(keywords, poz_words_list)
+    print("Pozytywne słowa: ", count_poz_words(keywords, poz_words_list))
+
+
+    def count_neg_words(keywords, neg_words_list):
+        count_neg = 0
+        for elem in keywords:
+            if elem in neg_words_list:
+                count_neg += 1
+        return count_neg
+
+
+    count_neg_words(keywords, neg_words_list)
+    print("Negatywne słowa: ", count_neg_words(keywords, neg_words_list))
+
+    count_poz = count_poz_words(keywords, poz_words_list)
+    count_neg = count_neg_words(keywords, neg_words_list)
+
+    if count_poz == count_neg:
+        print("Tekst jest neutralny.")
+    elif count_poz > count_neg:
+        print("Tekst jest nacechowany pozytywnie.")
+    else:
+        print("Tekst jest nacechowany negatywnie.")
+
+
+
+else:
+    print ("Please insert a numeral from 1 to 5")
